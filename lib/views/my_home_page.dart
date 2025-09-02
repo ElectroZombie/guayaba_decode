@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guayaba_decode/models/icon_model.dart';
-import 'package:guayaba_decode/packages/guayaba_decode_package.dart';
+import 'package:guayaba_decode/services/guayaba_decode_package.dart';
 import 'package:guayaba_decode/widgets/decode_widget.dart';
 import 'package:guayaba_decode/utils/tuple.dart';
 import 'package:guayaba_decode/widgets/popup_menu_item_list_widget.dart';

@@ -5,7 +5,7 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 
-import '../methods/cryptmap.dart';
+import '../structs/cryptmap.dart';
 import '../models/data_model.dart';
 
 class GuayabaDecode {
