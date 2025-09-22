@@ -60,11 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
       2: Tuple(
           T: Tuple(
               T: guayabaDecode.encryptMethod2, K: guayabaDecode.decryptMethod2),
-          K: IconModel(active: false)),
-      3: Tuple(
-          T: Tuple(
-              T: guayabaDecode.encryptMethod3, K: guayabaDecode.decryptMethod3),
-          K: IconModel(active: false)),
+          K: IconModel(active: false))
     };
   }
 

@@ -68,19 +68,6 @@ class GuayabaDecode {
     return textEncrypt;
   }
 
-  String encryptMethod3(String text) {
-    String textEncrypt = "";
-
-    DataModel data = _cryptMap.generateSimpleMap();
-    for (int i = 0; i < text.length; i++) {
-      textEncrypt += data.mAsciiUni[text[i]]!;
-    }
-
-    textEncrypt = _cryptMap.charList[data.firstPivot] + textEncrypt;
-
-    return textEncrypt;
-  }
-
   String decryptMethod1(String s) {
     int pivot = _cryptMap.charList.indexOf(s[0]);
     int gap = _cryptMap.charList.indexOf(s[s.length - 1]);
@@ -119,22 +106,6 @@ class GuayabaDecode {
                   gap))
               .toInt()
         ]);
-      }
-
-      return decrypt;
-    } catch (e) {
-      return s;
-    }
-  }
-
-  String decryptMethod3(String s) {
-    try {
-      int pivot = _cryptMap.charList.indexOf(s[0]);
-      DataModel data = _cryptMap.regenerateMap(pivot, 1);
-
-      String decrypt = "";
-      for (int i = 1; i < s.length; i++) {
-        decrypt += data.mUniAscii[s[i]]!;
       }
 
       return decrypt;
