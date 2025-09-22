@@ -81,12 +81,12 @@ class CryptMap {
     if (x <= 1 || y <= 1) {
       return false;
     }
-    int mayor = max(x, y);
-    int menor = min(x, y);
-    if (mayor % menor == 0) {
+    int higher = max(x, y);
+    int lesser = min(x, y);
+    if (higher % lesser == 0) {
       return true;
     } else {
-      return _areCoprimes(menor, mayor - menor);
+      return _areCoprimes(lesser, higher - lesser);
     }
   }
 

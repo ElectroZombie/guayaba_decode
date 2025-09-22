@@ -25,13 +25,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int typeEncrypt = 1;
 
-  TextEditingController controllerTexto = TextEditingController();
+  TextEditingController textController = TextEditingController();
 
-  callbackTexto(String T, String helperText, bool flagCrypt) {
-    controllerTexto = TextEditingController(text: T);
-    this.helperText = helperText;
-    this.flagCrypt = flagCrypt;
-    setState(() {});
+  textCallback(String T, String helperText, bool flagCrypt) {
+    setState(() {
+      textController = TextEditingController(text: T);
+      this.helperText = helperText;
+      this.flagCrypt = flagCrypt;
+    });
   }
 
   callBackTypeEncrypt(int opt) {
@@ -46,8 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
-
-  void prints(prec) {}
 
   @override
   void initState() {
@@ -91,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontSize: 20, color: Color.fromARGB(232, 186, 180, 180))),
         ),
         body: Stack(children: [
-          decode(controllerTexto, callbackTexto, helperText, M, typeEncrypt,
+          decode(textController, textCallback, helperText, M, typeEncrypt,
               flagCrypt, context)
         ]));
   }

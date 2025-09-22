@@ -7,8 +7,8 @@ import 'package:guayaba_decode/utils/tuple.dart';
 import 'package:guayaba_decode/widgets/gradient.dart';
 
 Widget decode(
-    TextEditingController controllerTexto,
-    Function callbackTexto,
+    TextEditingController textController,
+    Function textCallback,
     String textHelper,
     Map<int, Tuple<Tuple<Function, Function>, IconModel>> M,
     int typeEncrypt,
@@ -22,27 +22,27 @@ Widget decode(
           alignment: MainAxisAlignment.center,
           children: [
             IconButton(
-                onPressed: () => codificar(controllerTexto, callbackTexto, M,
+                onPressed: () => textEncoder(textController, textCallback, M,
                     typeEncrypt, flagCrypt, context),
                 icon: const Icon(Icons.enhanced_encryption),
                 color: Colors.black87,
                 hoverColor: const Color.fromARGB(101, 111, 8, 8),
                 tooltip: "ENCRYPT"),
             IconButton(
-                onPressed: () => decodificar(controllerTexto, callbackTexto, M,
+                onPressed: () => textDecoder(textController, textCallback, M,
                     typeEncrypt, flagCrypt, context),
                 icon: const Icon(Icons.no_encryption),
                 color: Colors.black87,
                 hoverColor: const Color.fromARGB(101, 111, 8, 8),
                 tooltip: "DE-ENCRYPT"),
             IconButton(
-                onPressed: () => portapapeles(controllerTexto, context),
+                onPressed: () => clipboard(textController, context),
                 icon: const Icon(Icons.file_present_sharp),
                 color: Colors.black87,
                 hoverColor: const Color.fromARGB(101, 111, 8, 8),
                 tooltip: "COPY TO CLIPBOARD"),
             IconButton(
-                onPressed: () => borrar(callbackTexto),
+                onPressed: () => erase(textCallback),
                 icon: const Icon(Icons.delete),
                 color: Colors.black87,
                 hoverColor: const Color.fromARGB(101, 111, 8, 8),
@@ -60,14 +60,14 @@ Widget decode(
                 child: TextFormField(
                   onChanged: (value) {
                     if (value.isEmpty) {
-                      callbackTexto("", "WRITE THE TEXT", false);
+                      textCallback("", "WRITE THE TEXT", false);
                     } else if (!flagCrypt) {
                       if (watchFirstChar(value)) {
-                        callbackTexto(value, "TEXT ENCRYPTED", !flagCrypt);
+                        textCallback(value, "TEXT ENCRYPTED", !flagCrypt);
                       }
                     } else {
                       if (!watchFirstChar(value)) {
-                        callbackTexto(value, "WRITE THE TEXT", !flagCrypt);
+                        textCallback(value, "WRITE THE TEXT", !flagCrypt);
                       }
                     }
                   },
@@ -80,7 +80,7 @@ Widget decode(
                           fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
                     ),
                   ),
-                  controller: controllerTexto,
+                  controller: textController,
                   keyboardType: TextInputType.multiline,
                   enabled: !flagCrypt,
                   maxLines: null,
@@ -92,9 +92,9 @@ Widget decode(
   );
 }
 
-void codificar(
-    TextEditingController controllerTexto,
-    Function callbackTexto,
+void textEncoder(
+    TextEditingController textController,
+    Function textCallback,
     Map<int, Tuple<Tuple<Function, Function>, IconModel>> M,
     int typeEncrypt,
     bool flagCrypt,
@@ -102,19 +102,19 @@ void codificar(
   if (flagCrypt) {
     showError(context, "THE TEXT IS ALREADY ENCRYPTED");
   } else {
-    String text = controllerTexto.text;
+    String text = textController.text;
     if (text.isEmpty) {
       showError(context, "WRITE THE TEXT FIRST");
     } else {
-      String textEncrypted = M[typeEncrypt]!.T!.T!(text);
-      callbackTexto(textEncrypted, "TEXT ENCRYPTED", !flagCrypt);
+      String encryptedText = M[typeEncrypt]!.T!.T!(text);
+      textCallback(encryptedText, "TEXT ENCRYPTED", !flagCrypt);
     }
   }
 }
 
-void decodificar(
-    TextEditingController controllerTexto,
-    Function callbackTexto,
+void textDecoder(
+    TextEditingController textController,
+    Function textCallback,
     Map<int, Tuple<Tuple<Function, Function>, IconModel>> M,
     int typeEncrypt,
     bool flagCrypt,
@@ -122,19 +122,24 @@ void decodificar(
   if (!flagCrypt) {
     showError(context, "THE TEXT HAS NOT BEEN ENCRYPTED YET");
   } else {
-    String text = controllerTexto.text;
-    String textDecrypted = M[typeEncrypt]!.T!.K!(text);
+    String text = textController.text;
+    String decryptedText = M[typeEncrypt]!.T!.K!(text);
 
-    if (textDecrypted == text) {
+    if (decryptedText == text) {
       showError(context, "THE DE-ENCRYPT HAS FAILED");
     } else {
-      callbackTexto(textDecrypted, "WRITE THE TEXT", !flagCrypt);
+      textCallback(decryptedText, "WRITE THE TEXT", !flagCrypt);
     }
   }
 }
 
-void portapapeles(TextEditingController controllerTexto, context) async {
-  Clipboard.setData(ClipboardData(text: controllerTexto.text));
+void clipboard(
+    TextEditingController textController, BuildContext context) async {
+  if (textController.text.isEmpty) {
+    showError(context, "WRITE THE TEXT FIRST");
+    return;
+  }
+  Clipboard.setData(ClipboardData(text: textController.text));
   await showDialog(
       context: context,
       builder: (context) {
@@ -148,8 +153,7 @@ void portapapeles(TextEditingController controllerTexto, context) async {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(
-                    context); // Cerrar el diálogo sin agregar la unidad
+                Navigator.pop(context);
               },
               child: const Text('OK'),
             ),
@@ -158,8 +162,8 @@ void portapapeles(TextEditingController controllerTexto, context) async {
       });
 }
 
-void borrar(Function callbackTexto) {
-  callbackTexto("", "WRITE THE TEXT", false);
+void erase(Function textCallback) {
+  textCallback("", "WRITE THE TEXT", false);
 }
 
 showError(context, String errorText) async {
