@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
               seedColor: const Color.fromARGB(255, 89, 1, 1)),
           useMaterial3: true,
           appBarTheme: const AppBarTheme(
-              color: Color.fromARGB(215, 89, 1, 1),
+              backgroundColor: Color.fromARGB(215, 89, 1, 1),
               shadowColor: Colors.black12),
           fontFamily: "Times new roman"),
       home: const MyHomePage(title: 'Guayaba Decode'),

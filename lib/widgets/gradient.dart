@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget gradient(double width, double height) {
   return Container(
-      width: width,
-      height: height,
+      constraints: BoxConstraints.tightFor(height: height, width: width),
       decoration: const BoxDecoration(
           gradient: LinearGradient(
               begin: FractionalOffset(0.0, 0.0),

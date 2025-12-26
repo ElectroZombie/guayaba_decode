@@ -89,9 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: const TextStyle(
                   fontSize: 20, color: Color.fromARGB(232, 186, 180, 180))),
         ),
-        body: Stack(children: [
-          decode(textController, textCallback, helperText, M, typeEncrypt,
-              flagCrypt, context)
-        ]));
+        body: decode(textController, textCallback, helperText, M, typeEncrypt,
+            flagCrypt, context));
   }
 }
