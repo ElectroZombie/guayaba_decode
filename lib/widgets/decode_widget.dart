@@ -1,78 +1,81 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:guayaba_decode/models/icon_model.dart';
-import 'package:guayaba_decode/utils/tuple.dart';
-import 'package:guayaba_decode/widgets/gradient.dart';
+import 'package:guayaba_decode/providers/crypt_method_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:guayaba_decode/widgets/overflow_bar_widget.dart';
 
 Widget decode(
     TextEditingController textController,
     Function textCallback,
     String textHelper,
-    Map<int, Tuple<Tuple<Function, Function>, IconModel>> M,
-    int typeEncrypt,
     bool flagCrypt,
+    CryptMethodProvider prov,
     BuildContext context) {
-  return Column(children: [
-    Container(
-        color: const Color.fromARGB(195, 255, 255, 255),
-        child: overflowbarUp(
-            textController, textCallback, M, typeEncrypt, flagCrypt, context)),
-    Stack(children: [
-      // gradient(MediaQuery.of(context).size.width,
-      //     MediaQuery.of(context).size.height * 8 / 10),
-      Center(
-          child: Row(
-              spacing: 0.0,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-            SizedBox(
-                width: MediaQuery.of(context).size.width * 10 / 100,
-                child: overflowBarLeft(textController, textCallback, M,
-                    typeEncrypt, flagCrypt, context)),
-            SizedBox(
-                child: SingleChildScrollView(
-                    child: TextFormField(
-              onChanged: (value) {
-                if (value.isEmpty) {
-                  textCallback("", "WRITE THE TEXT", false);
-                } else if (!flagCrypt) {
-                  if (watchFirstChar(value)) {
-                    textCallback(value, "TEXT ENCRYPTED", !flagCrypt);
-                  }
-                } else {
-                  if (!watchFirstChar(value)) {
-                    textCallback(value, "WRITE THE TEXT", !flagCrypt);
-                  }
-                }
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: const Color.fromARGB(61, 133, 111, 111),
-                constraints: BoxConstraints.tightFor(
-                    width: (MediaQuery.of(context).size.width * 75) / 100,
-                    height: (MediaQuery.of(context).size.height * 80) / 100),
-                helper: Text(
-                  textHelper,
-                  style: const TextStyle(
-                      fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
-                ),
-              ),
-              controller: textController,
-              keyboardType: TextInputType.multiline,
-              enabled: !flagCrypt,
-              maxLines: null,
-              style: const TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-            ))),
-            SizedBox(
-                width: MediaQuery.of(context).size.width * 10 / 100,
-                child: overflowBarRight(textController, textCallback, M,
-                    typeEncrypt, flagCrypt, context)),
-          ]))
-    ])
-  ]);
+  return ChangeNotifierProvider<CryptMethodProvider>(
+      create: (context) => prov,
+      builder: (context, child) => Column(children: [
+            Container(
+                color: const Color.fromARGB(195, 255, 255, 255),
+                child: overflowbarUp(
+                    textController, textCallback, flagCrypt, prov, context)),
+            Stack(children: [
+              // gradient(MediaQuery.of(context).size.width,
+              //     MediaQuery.of(context).size.height * 8 / 10),
+              Center(
+                  child: Row(
+                      spacing: 0.0,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 10 / 100,
+                        child: overflowBarLeft(
+                            textController, textCallback, flagCrypt, context)),
+                    SizedBox(
+                        child: SingleChildScrollView(
+                            child: TextFormField(
+                      onChanged: (value) {
+                        if (value.isEmpty) {
+                          textCallback("", "WRITE THE TEXT", false);
+                        } else if (!flagCrypt) {
+                          if (watchFirstChar(value)) {
+                            textCallback(value, "TEXT ENCRYPTED", !flagCrypt);
+                          }
+                        } else {
+                          if (!watchFirstChar(value)) {
+                            textCallback(value, "WRITE THE TEXT", !flagCrypt);
+                          }
+                        }
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color.fromARGB(61, 133, 111, 111),
+                        constraints: BoxConstraints.tightFor(
+                            width:
+                                (MediaQuery.of(context).size.width * 75) / 100,
+                            height: (MediaQuery.of(context).size.height * 80) /
+                                100),
+                        helper: Text(
+                          textHelper,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 0, 0, 0)),
+                        ),
+                      ),
+                      controller: textController,
+                      keyboardType: TextInputType.multiline,
+                      enabled: !flagCrypt,
+                      maxLines: null,
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
+                    ))),
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 10 / 100,
+                        child: overflowBarRight(
+                            textController, textCallback, flagCrypt, context)),
+                  ]))
+            ])
+          ]));
 }
 
 showError(context, String errorText) async {

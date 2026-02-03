@@ -5,34 +5,49 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 
+import '../models/icon_model.dart' show IconModel;
 import '../structs/cryptmap.dart';
 import '../models/data_model.dart';
+import '../utils/tuple.dart' show Tuple;
 
 class GuayabaDecode {
-  List<dynamic> _jsonData = [];
-  List<String> _charList = [];
-  CryptMap _cryptMap = CryptMap([]);
+  static List<dynamic> _jsonData = [];
+  static List<String> _charList = [];
+  static CryptMap _cryptMap = CryptMap([]);
 
-  GuayabaDecode() {
-    load();
+  static Map<int, Tuple<Tuple<Function, Function>, IconModel>> methodsMap = {
+    1: Tuple(
+        T: Tuple(
+            T: GuayabaDecode.encryptMethod1, K: GuayabaDecode.decryptMethod1),
+        K: IconModel(active: true)),
+    2: Tuple(
+        T: Tuple(
+            T: GuayabaDecode.encryptMethod2, K: GuayabaDecode.decryptMethod2),
+        K: IconModel(active: false)),
+    3: Tuple(
+        T: Tuple(
+            T: GuayabaDecode.encryptMethod3, K: GuayabaDecode.decryptMethod3),
+        K: IconModel(active: false)),
+  };
+
+  static void load() async {
+    if (_charList.isEmpty) {
+      _charList = await _loadCL();
+      _cryptMap = CryptMap(_charList);
+    }
   }
 
-  load() async {
-    _charList = await loadCL();
-    _cryptMap = CryptMap(_charList);
-  }
-
-  Future<String> loadJson() async {
+  static Future<String> _loadJson() async {
     return await rootBundle.loadString("assets/chars.json");
   }
 
-  Future<List<String>> loadCL() async {
-    String json = await loadJson();
+  static Future<List<String>> _loadCL() async {
+    String json = await _loadJson();
     _jsonData = await jsonDecode(json);
     return List.generate(_jsonData.length, (i) => _jsonData[i]['char']);
   }
 
-  String encryptMethod1(String text) {
+  static String encryptMethod1(String text) {
     String textEncrypt = "";
 
     DataModel data = _cryptMap.generateMap();
@@ -46,7 +61,7 @@ class GuayabaDecode {
     return textEncrypt;
   }
 
-  String encryptMethod2(String text) {
+  static String encryptMethod2(String text) {
     String textEncrypt =
         _cryptMap.charList[const AsciiEncoder().convert(text)[0]];
 
@@ -68,7 +83,7 @@ class GuayabaDecode {
     return textEncrypt;
   }
 
-  String encryptMethod3(String text) {
+  static String encryptMethod3(String text) {
     String textEncrypt = "";
 
     DataModel data = _cryptMap.generateSimpleMap();
@@ -81,7 +96,7 @@ class GuayabaDecode {
     return textEncrypt;
   }
 
-  String decryptMethod1(String s) {
+  static String decryptMethod1(String s) {
     int pivot = _cryptMap.charList.indexOf(s[0]);
     int gap = _cryptMap.charList.indexOf(s[s.length - 1]);
 
@@ -99,7 +114,7 @@ class GuayabaDecode {
     }
   }
 
-  String decryptMethod2(String s) {
+  static String decryptMethod2(String s) {
     try {
       String decrypt =
           const AsciiDecoder().convert([_cryptMap.charList.indexOf(s[0])])[0];
@@ -127,7 +142,7 @@ class GuayabaDecode {
     }
   }
 
-  String decryptMethod3(String s) {
+  static String decryptMethod3(String s) {
     try {
       int pivot = _cryptMap.charList.indexOf(s[0]);
       DataModel data = _cryptMap.regenerateMap(pivot, 1);

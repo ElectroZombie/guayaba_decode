@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:guayaba_decode/models/icon_model.dart';
-import 'package:guayaba_decode/utils/tuple.dart';
+import 'package:guayaba_decode/providers/crypt_method_provider.dart';
+import 'package:guayaba_decode/services/guayaba_decode_package.dart';
 
-List<PopupMenuItem> popupMenuItemList(
-    Map<int, Tuple<Tuple<Function, Function>, IconModel>> M,
-    callBackTypeEncrypt) {
+List<PopupMenuItem> popupMenuItemList(CryptMethodProvider prov) {
   return List.generate(
-    M.length * 2 + 1,
-    (i) => selectorMenuItem(i, M, callBackTypeEncrypt),
+    GuayabaDecode.methodsMap.length * 2 + 1,
+    (i) => selectorMenuItem(i, prov),
   );
 }
 
-selectorMenuItem(int i, M, callBackTypeEncrypt) {
+selectorMenuItem(int i, CryptMethodProvider prov) {
   if (i % 2 == 0) {
-    if (i == M.length * 2) {
+    if (i == GuayabaDecode.methodsMap.length * 2) {
       return const PopupMenuItem(
           enabled: false,
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -28,9 +26,10 @@ selectorMenuItem(int i, M, callBackTypeEncrypt) {
       return PopupMenuItem(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text("METHOD ${i ~/ 2 + 1}:", style: const TextStyle(fontSize: 15)),
-            Icon(M[i / 2 + 1]!.K!.getIcon(), color: M[i / 2 + 1]!.K!.getColor())
+            Icon(GuayabaDecode.methodsMap[i / 2 + 1]!.K!.getIcon(),
+                color: GuayabaDecode.methodsMap[i / 2 + 1]!.K!.getColor())
           ]),
-          onTap: () => {callBackTypeEncrypt(i ~/ 2 + 1)});
+          onTap: () => {prov.activateTypeEncrypt(i ~/ 2 + 1)});
     }
   } else {
     return const PopupMenuItem(

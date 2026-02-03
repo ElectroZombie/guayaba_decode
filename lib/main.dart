@@ -1,27 +1,19 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:guayaba_decode/providers/crypt_method_provider.dart';
 
 import 'views/my_home_page.dart';
 
 void main() {
-  bool hasImage = true;
-  if (Platform.isLinux) {
-    hasImage = false;
-  }
-
-  runApp(MyApp(hasImage));
+  runApp(const MyApp());
 }
 
-// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  bool hasImage;
-  MyApp(this.hasImage, {super.key});
+  const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    //Guayaba G = Guayaba();
+    CryptMethodProvider provider = CryptMethodProvider();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -32,7 +24,7 @@ class MyApp extends StatelessWidget {
               backgroundColor: Color.fromARGB(215, 89, 1, 1),
               shadowColor: Colors.black12),
           fontFamily: "Times new roman"),
-      home: const MyHomePage(title: 'Guayaba Decode'),
+      home: MyHomePage(title: 'Guayaba Decode', provider: provider),
     );
   }
 }

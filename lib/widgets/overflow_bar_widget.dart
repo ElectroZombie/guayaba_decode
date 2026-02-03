@@ -1,66 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:guayaba_decode/providers/crypt_method_provider.dart';
+import 'package:guayaba_decode/services/file_picker_service.dart';
+import 'package:guayaba_decode/services/guayaba_decode_package.dart';
+import 'package:provider/provider.dart';
 
-import '../models/icon_model.dart';
-import '../utils/tuple.dart';
 import 'decode_widget.dart';
+import 'popup_menu_item_list_widget.dart';
 
 Widget overflowbarUp(
-    textController, textCallback, M, typeEncrypt, flagCrypt, context) {
-  return OverflowBar(
-    alignment: MainAxisAlignment.center,
-    children: [
-      IconButton(
-          onPressed: () => textEncoder(
-              textController, textCallback, M, typeEncrypt, flagCrypt, context),
-          icon: const Icon(Icons.enhanced_encryption),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "ENCRYPT"),
-      IconButton(
-          onPressed: () => textDecoder(
-              textController, textCallback, M, typeEncrypt, flagCrypt, context),
-          icon: const Icon(Icons.no_encryption),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "DE-ENCRYPT"),
-      IconButton(
-          onPressed: () => clipboard(textController, context),
-          icon: const Icon(Icons.file_present_sharp),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "COPY TO CLIPBOARD"),
-      IconButton(
-          onPressed: () => erase(textCallback),
-          icon: const Icon(Icons.delete),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "ERASE ALL")
-    ],
-  );
+    TextEditingController textController,
+    Function textCallback,
+    bool flagCrypt,
+    CryptMethodProvider prov,
+    BuildContext context) {
+  return Consumer<CryptMethodProvider>(builder: (context, prov, child) {
+    return OverflowBar(
+      alignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+            onPressed: () => textEncoder(
+                textController, textCallback, prov, flagCrypt, context),
+            icon: const Icon(Icons.enhanced_encryption),
+            color: Colors.black87,
+            hoverColor: const Color.fromARGB(101, 111, 8, 8),
+            tooltip: "ENCRYPT"),
+        IconButton(
+            onPressed: () => textDecoder(
+                textController, textCallback, prov, flagCrypt, context),
+            icon: const Icon(Icons.no_encryption),
+            color: Colors.black87,
+            hoverColor: const Color.fromARGB(101, 111, 8, 8),
+            tooltip: "DE-ENCRYPT"),
+        const SizedBox(width: 5),
+        Text("METHOD ${prov.typeEncrypt}"),
+        PopupMenuButton(
+            tooltip: "SHOW MENU",
+            style: ButtonStyle(
+                overlayColor: WidgetStateColor.resolveWith(
+                    (states) => const Color.fromARGB(99, 104, 58, 183))),
+            itemBuilder: (context) {
+              return popupMenuItemList(prov);
+            },
+            child: const Icon(Icons.keyboard_arrow_down_sharp)),
+      ],
+    );
+  });
 }
 
-Widget overflowBarLeft(
-    textController, textCallback, M, typeEncrypt, flagCrypt, context) {
+Widget overflowBarLeft(TextEditingController textController,
+    Function textCallback, bool flagCrypt, BuildContext context) {
   return OverflowBar(
     alignment: MainAxisAlignment.center,
     overflowAlignment: OverflowBarAlignment.end,
     children: [
       IconButton(
-          onPressed: () => textEncoder(
-              textController, textCallback, M, typeEncrypt, flagCrypt, context),
-          icon: const Icon(Icons.enhanced_encryption),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "ENCRYPT"),
-      IconButton(
-          onPressed: () => textDecoder(
-              textController, textCallback, M, typeEncrypt, flagCrypt, context),
-          icon: const Icon(Icons.no_encryption),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "DE-ENCRYPT"),
-      IconButton(
           onPressed: () => clipboard(textController, context),
           icon: const Icon(Icons.file_present_sharp),
           color: Colors.black87,
@@ -76,49 +70,30 @@ Widget overflowBarLeft(
   );
 }
 
-Widget overflowBarRight(
-    textController, textCallback, M, typeEncrypt, flagCrypt, context) {
+Widget overflowBarRight(TextEditingController textController,
+    Function textCallback, bool flagCrypt, BuildContext context) {
   return OverflowBar(
     alignment: MainAxisAlignment.center,
     overflowAlignment: OverflowBarAlignment.start,
     children: [
       IconButton(
-          onPressed: () => textEncoder(
-              textController, textCallback, M, typeEncrypt, flagCrypt, context),
-          icon: const Icon(Icons.enhanced_encryption),
+          onPressed: () => FilePickerService.loadFile(),
+          icon: const Icon(Icons.file_open),
           color: Colors.black87,
           hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "ENCRYPT"),
+          tooltip: "LOAD FILE"),
       IconButton(
-          onPressed: () => textDecoder(
-              textController, textCallback, M, typeEncrypt, flagCrypt, context),
-          icon: const Icon(Icons.no_encryption),
+          onPressed: () => FilePickerService.saveFile(),
+          icon: const Icon(Icons.save),
           color: Colors.black87,
           hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "DE-ENCRYPT"),
-      IconButton(
-          onPressed: () => clipboard(textController, context),
-          icon: const Icon(Icons.file_present_sharp),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "COPY TO CLIPBOARD"),
-      IconButton(
-          onPressed: () => erase(textCallback),
-          icon: const Icon(Icons.delete),
-          color: Colors.black87,
-          hoverColor: const Color.fromARGB(101, 111, 8, 8),
-          tooltip: "ERASE ALL")
+          tooltip: "SAVE FILE")
     ],
   );
 }
 
-void textEncoder(
-    TextEditingController textController,
-    Function textCallback,
-    Map<int, Tuple<Tuple<Function, Function>, IconModel>> M,
-    int typeEncrypt,
-    bool flagCrypt,
-    context) {
+void textEncoder(TextEditingController textController, Function textCallback,
+    CryptMethodProvider prov, bool flagCrypt, context) {
   if (flagCrypt) {
     showError(context, "THE TEXT IS ALREADY ENCRYPTED");
   } else {
@@ -126,24 +101,21 @@ void textEncoder(
     if (text.isEmpty) {
       showError(context, "WRITE THE TEXT FIRST");
     } else {
-      String encryptedText = M[typeEncrypt]!.T!.T!(text);
+      String encryptedText =
+          GuayabaDecode.methodsMap[prov.typeEncrypt]!.T!.T!(text);
       textCallback(encryptedText, "TEXT ENCRYPTED", !flagCrypt);
     }
   }
 }
 
-void textDecoder(
-    TextEditingController textController,
-    Function textCallback,
-    Map<int, Tuple<Tuple<Function, Function>, IconModel>> M,
-    int typeEncrypt,
-    bool flagCrypt,
-    context) {
+void textDecoder(TextEditingController textController, Function textCallback,
+    CryptMethodProvider prov, bool flagCrypt, context) {
   if (!flagCrypt) {
     showError(context, "THE TEXT HAS NOT BEEN ENCRYPTED YET");
   } else {
     String text = textController.text;
-    String decryptedText = M[typeEncrypt]!.T!.K!(text);
+    String decryptedText =
+        GuayabaDecode.methodsMap[prov.typeEncrypt]!.T!.K!(text);
 
     if (decryptedText == text) {
       showError(context, "THE DE-ENCRYPT HAS FAILED");
