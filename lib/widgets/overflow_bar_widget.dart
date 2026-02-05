@@ -77,19 +77,52 @@ Widget overflowBarRight(TextEditingController textController,
     overflowAlignment: OverflowBarAlignment.start,
     children: [
       IconButton(
-          onPressed: () => FilePickerService.loadFile(),
+          onPressed: () =>
+              loadFile(textController, textCallback, flagCrypt, context),
           icon: const Icon(Icons.file_open),
           color: Colors.black87,
           hoverColor: const Color.fromARGB(101, 111, 8, 8),
           tooltip: "LOAD FILE"),
       IconButton(
-          onPressed: () => FilePickerService.saveFile(),
+          onPressed: () => FilePickerService.saveFile(textController.text),
           icon: const Icon(Icons.save),
           color: Colors.black87,
           hoverColor: const Color.fromARGB(101, 111, 8, 8),
           tooltip: "SAVE FILE")
     ],
   );
+}
+
+void loadFile(TextEditingController textController, Function textCallback,
+    bool flagCrypt, context) async {
+  String content = await FilePickerService.loadFile();
+  if (content != "") {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('ADVICE'),
+            backgroundColor: const Color.fromARGB(255, 69, 74, 81),
+            content: const Text(
+              "CONTENT LOADED",
+              style: TextStyle(color: Colors.black87, fontSize: 18),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        });
+    if (watchFirstChar(content)) {
+      textCallback(content, "TEXT ENCRYPTED", true);
+    } else {
+      textCallback(content, "WRITE THE TEXT", false);
+    }
+  }
 }
 
 void textEncoder(TextEditingController textController, Function textCallback,
