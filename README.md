@@ -1,16 +1,28 @@
-# guayaba_decode
+# **Guayaba Decode**
 
-A new Flutter project.
+![Guayaba Decode](/assets/images/logo.png "Hover text")
 
-## Getting Started
+## **A mobile application to encrypt/decrypt text**
 
-This project is a starting point for a Flutter application.
+**V3.2.3**
 
-A few resources to get you started if this is your first Flutter project:
+-----
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### **AUTHOR:**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Eric Michel Villavicencio Reyes [(Github)](https://github.com/ElectroZombie)
+
+-----
+
+> ### [BUILDING SPECS]
+>
+> * Java Version: 21.0.10+7
+> * Dart SDK: 3.10.4
+> * Flutter SDK: 3.38.5
+> * Android SDK: 36.0.0
+
+> ### [BUILT ON]
+>
+> * VSCODE: 1.107.1
+> * OS: Linux x64 6.12.68-1-MANJARO
+
